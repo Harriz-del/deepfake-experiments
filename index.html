@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Deepfake Detection Research Study</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ============ SCREEN 1: LANDING ============ -->
+  <section id="screen-landing" class="screen active">
+    <div class="card card--intro">
+      <span class="eyebrow">Academic Research Study</span>
+      <h1>Deepfake Detection Research Study</h1>
+      <p class="subtitle">Identifying Authentic and AI‑Generated Videos on Social Media</p>
+      <p class="body-text">
+        You are invited to participate in an academic research study examining how
+        students identify authentic and AI‑generated (deepfake) videos and images presented in a
+        social‑media‑style context. The study takes about 10&ndash;15 minutes to complete.
+      </p>
+      <button class="btn btn-primary" id="btn-start-study">Start</button>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 2: CONSENT ============ -->
+  <section id="screen-consent" class="screen">
+    <div class="card">
+      <span class="eyebrow">Step 1 of 4</span>
+      <h2>Research Information &amp; Consent</h2>
+      <ul class="info-list">
+        <li><strong>Purpose:</strong> This study examines how accurately people can distinguish real videos from AI‑generated (deepfake) videos.</li>
+        <li><strong>Voluntary participation:</strong> Taking part is entirely voluntary. You may stop at any time without penalty.</li>
+        <li><strong>Use of data:</strong> Your responses will be used only for academic research purposes.</li>
+        <li><strong>Data storage:</strong> Responses are stored securely and identified only by an anonymous participant ID &mdash; not your name.</li>
+        <li><strong>No feedback during the study:</strong> You will not be told whether any individual answer is correct while the study is running.</li>
+        <li><strong>Withdrawal:</strong> You may close the browser tab at any point to stop participating.</li>
+      </ul>
+      <label class="checkbox-row">
+        <input type="checkbox" id="consent-checkbox">
+        <span>I have read and understood the information above and agree to participate.</span>
+      </label>
+      <button class="btn btn-primary" id="btn-consent-continue" disabled>Continue</button>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 3: PARTICIPANT INFORMATION ============ -->
+  <section id="screen-participant" class="screen">
+    <div class="card">
+      <span class="eyebrow">Step 2 of 4</span>
+      <h2>Participant Information</h2>
+      <p class="body-text">A random, anonymous participant ID has been generated for you. No personally identifiable information is required.</p>
+
+      <div class="field-group">
+        <label>Your anonymous participant ID</label>
+        <div class="id-display" id="participant-id-display">DF-XXXXXX</div>
+      </div>
+
+      <div class="field-group">
+        <label for="age-range">Age range <span class="optional">(optional)</span></label>
+        <select id="age-range">
+          <option value="under-14">Under 14</option>
+          <option value="14-18">14&ndash;18</option>
+          <option value="Above 18">Above 18</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label for="education-level">Student / education level <span class="optional">(optional)</span></label>
+        <select id="education-level">
+          <option value="ujc">Uniprep Junior College (UJC)</option>
+          <option value="foundation">Uniprep Foundation Year</option>
+          <option value="btec">BTEC</option>
+          <option value="uts">UIC-UTS College</option>
+        </select>
+      </div>
+
+      <button class="btn btn-primary" id="btn-participant-continue">Continue</button>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 4: INSTRUCTIONS ============ -->
+  <section id="screen-instructions" class="screen">
+    <div class="card">
+      <span class="eyebrow">Step 3 of 4</span>
+      <h2>Instructions</h2>
+      <ol class="info-list info-list--numbered">
+        <li>You will be shown a series of short videos and images presented in a social‑media‑style format, one at a time.</li>
+        <li>For each item, decide whether you believe it is <strong>real / authentic</strong> or <strong>fake / AI‑generated</strong>.</li>
+        <li>After selecting your answer, indicate how confident you are in your decision by clicking the number between 1 to 5.</li>
+        <li>Please make your decision independently &mdash; do not search the internet or use external tools.</li>
+        <li>Your answer will <strong>not</strong> be marked as correct or incorrect during the study.</li>
+        <li>You must submit your response before the next video becomes available.</li>
+      </ol>
+      <button class="btn btn-primary" id="btn-begin-experiment">Begin Experiment</button>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 5: EXPERIMENT ============ -->
+  <section id="screen-experiment" class="screen">
+    <div class="experiment-wrap">
+
+      <div class="progress-block">
+        <div class="progress-label" id="progress-label">Item 1 of 10</div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progress-bar-fill"></div>
+        </div>
+      </div>
+
+      <div class="video-frame">
+        <video id="video-player" playsinline controls controlsList="nodownload noplaybackrate">
+          Your browser does not support embedded video.
+        </video>
+        <img id="image-player" class="stimulus-image" alt="Image for deepfake identification" hidden>
+      </div>
+
+      <div class="answer-panel">
+        <p class="question" id="question-text">Is this real or fake?</p>
+        <div class="choice-row">
+          <button class="choice-btn" data-choice="real" id="btn-choice-real">Real</button>
+          <button class="choice-btn" data-choice="fake" id="btn-choice-fake">Fake</button>
+        </div>
+
+        <p class="question question--secondary">How confident are you?</p>
+        <div class="confidence-row" id="confidence-row">
+          <button class="confidence-btn" data-confidence="1">1</button>
+          <button class="confidence-btn" data-confidence="2">2</button>
+          <button class="confidence-btn" data-confidence="3">3</button>
+          <button class="confidence-btn" data-confidence="4">4</button>
+          <button class="confidence-btn" data-confidence="5">5</button>
+        </div>
+        <div class="confidence-labels">
+          <span>1 = Not confident at all</span>
+          <span>5 = Extremely confident</span>
+        </div>
+
+        <p class="validation-message" id="validation-message" hidden></p>
+        <p class="save-error-message" id="save-error-message" hidden>
+          Your response could not be saved. Please check your connection and try again.
+        </p>
+
+        <button class="btn btn-primary btn-block" id="btn-submit-answer">Submit Answer</button>
+        <button class="btn btn-secondary btn-block" id="btn-retry" hidden>Retry Saving Response</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 6: THANK YOU ============ -->
+  <section id="screen-thankyou" class="screen">
+    <div class="card card--intro">
+      <span class="eyebrow">Study Complete</span>
+      <h1>Thank You for Participating!</h1>
+      <p class="body-text">
+        Thank you for taking part in this research study. Your responses have been
+        recorded successfully and will contribute to research on deepfake detection
+        and cybersecurity awareness.
+      </p>
+      <p class="body-text muted">You may now close this window.</p>
+    </div>
+  </section>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

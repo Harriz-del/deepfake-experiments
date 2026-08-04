@@ -1,0 +1,420 @@
+/* ==========================================================
+   Deepfake Detection Research Study — Stylesheet
+   Palette: slate navy + muted teal accent, warm neutral paper
+   ========================================================== */
+
+:root {
+  --color-bg: #F4F5F3;
+  --color-surface: #FFFFFF;
+  --color-ink: #1E2A38;
+  --color-ink-soft: #4A5568;
+  --color-muted: #7A869A;
+  --color-border: #E1E5EA;
+  --color-accent: #2E6E7E;
+  --color-accent-dark: #235360;
+  --color-accent-soft: #E6EFF1;
+  --color-danger: #B3432B;
+  --color-danger-soft: #FBEAE5;
+
+  --font-display: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  --radius: 10px;
+  --shadow: 0 1px 2px rgba(30, 42, 56, 0.06), 0 4px 16px rgba(30, 42, 56, 0.06);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.screen {
+  display: none;
+  width: 100%;
+  min-height: 100vh;
+  padding: 32px 16px 48px;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.screen.active {
+  display: flex;
+}
+
+/* ---------- Card (used by non-experiment screens) ---------- */
+
+.card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 32px 24px;
+  margin-top: 24px;
+}
+
+.card--intro {
+  text-align: center;
+  margin-top: 48px;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1.25;
+  margin: 0 0 8px;
+  color: var(--color-ink);
+}
+
+h2 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1.3;
+  margin: 0 0 16px;
+  color: var(--color-ink);
+}
+
+.subtitle {
+  font-size: 16px;
+  color: var(--color-ink-soft);
+  margin: 0 0 20px;
+}
+
+.body-text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-ink-soft);
+  margin: 0 0 24px;
+}
+
+.body-text.muted {
+  color: var(--color-muted);
+  font-size: 14px;
+}
+
+.info-list {
+  margin: 0 0 24px;
+  padding-left: 20px;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--color-ink-soft);
+}
+
+.info-list li { margin-bottom: 10px; }
+
+.info-list--numbered { padding-left: 22px; }
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  padding: 15px 20px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, opacity 0.15s ease, transform 0.05s ease;
+}
+
+.btn:active { transform: translateY(1px); }
+
+.btn-block { width: 100%; display: block; }
+
+.btn-primary {
+  background: var(--color-accent);
+  color: #FFFFFF;
+}
+
+.btn-primary:hover:not(:disabled) { background: var(--color-accent-dark); }
+
+.btn-primary:disabled {
+  background: #B7C4CB;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-dark);
+  margin-top: 10px;
+}
+
+.btn-secondary:hover { background: #D9E7EA; }
+
+/* ---------- Consent ---------- */
+
+.checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--color-ink-soft);
+  margin-bottom: 24px;
+  cursor: pointer;
+}
+
+.checkbox-row input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  accent-color: var(--color-accent);
+}
+
+/* ---------- Participant info form ---------- */
+
+.field-group {
+  margin-bottom: 20px;
+}
+
+.field-group label {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin-bottom: 6px;
+}
+
+.optional {
+  font-weight: 400;
+  color: var(--color-muted);
+}
+
+.id-display {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 18px;
+  letter-spacing: 0.04em;
+  background: var(--color-accent-soft);
+  color: var(--color-accent-dark);
+  border-radius: 8px;
+  padding: 12px 14px;
+  text-align: center;
+}
+
+select {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 15px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+/* ---------- Experiment screen ---------- */
+
+.experiment-wrap {
+  width: 100%;
+  max-width: 460px;
+  margin-top: 16px;
+}
+
+.progress-block {
+  margin-bottom: 14px;
+}
+
+.progress-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink-soft);
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.progress-bar-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 4px;
+  background: var(--color-border);
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  width: 10%;
+  background: var(--color-accent);
+  transition: width 0.25s ease;
+}
+
+.video-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  max-height: 52vh;
+  background: #0F1720;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  margin: 0 auto 20px;
+}
+
+#video-player,
+.stimulus-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #0F1720;
+  display: block;
+}
+
+/* Belt-and-suspenders: guarantee the `hidden` attribute always wins,
+   regardless of any other `display` rule targeting these elements.
+   (This is what was broken before — #video-player/.stimulus-image's
+   own `display: block` was silently overriding `hidden`.) */
+#video-player[hidden],
+.stimulus-image[hidden] {
+  display: none !important;
+}
+
+.answer-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 20px 18px;
+}
+
+.question {
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0 0 12px;
+}
+
+.question--secondary { margin-top: 20px; }
+
+.choice-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.choice-btn {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
+  padding: 16px 12px;
+  border-radius: 8px;
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.choice-btn:hover { border-color: var(--color-accent); }
+
+.choice-btn.selected {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: #FFFFFF;
+}
+
+.confidence-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.confidence-btn {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
+  padding: 12px 0;
+  border-radius: 8px;
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.confidence-btn:hover { border-color: var(--color-accent); }
+
+.confidence-btn.selected {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: #FFFFFF;
+}
+
+.confidence-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: var(--color-muted);
+  margin-bottom: 18px;
+}
+
+.validation-message {
+  font-size: 13.5px;
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin: 0 0 14px;
+}
+
+.save-error-message {
+  font-size: 13.5px;
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin: 0 0 14px;
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 380px) {
+  .card { padding: 24px 18px; }
+  h1 { font-size: 24px; }
+  .video-frame { max-height: 46vh; }
+}
+
+/* ---------- Focus visibility ---------- */
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-accent-dark);
+  outline-offset: 2px;
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
