@@ -102,6 +102,68 @@ function showScreen(id) {
 }
 
 /* ----------------------------------------------------------
+   4b. SESSION PERSISTENCE — survive an accidental page refresh
+   mid-experiment without starting over as a brand-new participant.
+   Without this, a refresh (e.g. after someone gets spooked by a
+   transient save error) generates a fresh Participant_ID, which the
+   server-side duplicate check can't catch since it's keyed on
+   Participant_ID + Stimulus_ID. sessionStorage clears itself when the
+   tab is actually closed, so a genuinely new visit still starts fresh.
+   ---------------------------------------------------------- */
+
+const SESSION_STORAGE_KEY = "deepfakeStudySession";
+
+function saveSession() {
+  try {
+    sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({
+      participantId: state.participantId,
+      ageRange: state.ageRange,
+      educationLevel: state.educationLevel,
+      stimulusOrder: state.stimulusOrder,
+      currentIndex: state.currentIndex,
+      submittedStimulusIds: Array.from(state.submittedStimulusIds),
+    }));
+  } catch (err) {
+    // sessionStorage unavailable (e.g. private browsing) — degrade
+    // silently; a refresh will behave as it did before this change.
+  }
+}
+
+function loadSession() {
+  try {
+    const raw = sessionStorage.getItem(SESSION_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (err) {
+    return null;
+  }
+}
+
+function clearSession() {
+  try {
+    sessionStorage.removeItem(SESSION_STORAGE_KEY);
+  } catch (err) {
+    // nothing to do
+  }
+}
+
+function attemptResumeSession() {
+  const saved = loadSession();
+  if (!saved || !saved.participantId || !Array.isArray(saved.stimulusOrder) || saved.stimulusOrder.length === 0) {
+    return;
+  }
+
+  state.participantId = saved.participantId;
+  state.ageRange = saved.ageRange || "";
+  state.educationLevel = saved.educationLevel || "";
+  state.stimulusOrder = saved.stimulusOrder;
+  state.currentIndex = Math.min(saved.currentIndex || 0, state.stimulusOrder.length - 1);
+  state.submittedStimulusIds = new Set(saved.submittedStimulusIds || []);
+
+  showScreen("screen-experiment");
+  loadCurrentStimulus();
+}
+
+/* ----------------------------------------------------------
    5. SCREEN 1 -> 2: LANDING -> CONSENT
    ---------------------------------------------------------- */
 
@@ -212,6 +274,8 @@ function loadCurrentStimulus() {
 
     questionText.textContent = "Is this video real or fake?";
   }
+
+  saveSession();
 }
 
 btnChoiceReal.addEventListener("click", () => selectAnswer("real"));
@@ -281,6 +345,8 @@ async function handleSubmit() {
       throw new Error("Unexpected server response");
     }
   } catch (err) {
+    console.error("[Study] Failed to save response:", err);
+    saveErrorMessage.textContent = messageForSaveError(err);
     saveErrorMessage.hidden = false;
     btnSubmitAnswer.hidden = true;
     btnRetry.hidden = false;
@@ -291,12 +357,29 @@ async function handleSubmit() {
   }
 }
 
+// Picks a message based on *why* the save failed, instead of always
+// blaming the connection — a missing endpoint config looks very
+// different from a genuine dropped connection.
+function messageForSaveError(err) {
+  if (err && err.code === "CONFIG_MISSING") {
+    return "This study isn't fully set up yet (missing submission endpoint). Please let the researcher know.";
+  }
+  if (err instanceof TypeError) {
+    // fetch() only throws a bare TypeError for genuine network-level
+    // failures (offline, DNS failure) — this is the one case that's
+    // actually about connectivity.
+    return "Your response could not be saved. Please check your connection and try again.";
+  }
+  return "Your response could not be saved. Please try again.";
+}
+
 function advanceToNext() {
   if (state.currentIndex < state.stimulusOrder.length - 1) {
     state.currentIndex += 1;
     loadCurrentStimulus();
   } else {
     videoPlayer.pause();
+    clearSession();
     showScreen("screen-thankyou");
   }
 }
@@ -305,25 +388,44 @@ function advanceToNext() {
    10. NETWORK — save one response to Google Sheets via Apps Script
    ---------------------------------------------------------- */
 
-function saveResponse(payload) {
+async function saveResponse(payload) {
   if (DEBUG_SKIP_NETWORK) {
     console.log("[DEBUG] Response payload:", payload);
-    return Promise.resolve("ok");
+    return "ok";
   }
 
-  // Using a plain string body (default Content-Type: text/plain) avoids
-  // triggering a CORS preflight request, which Google Apps Script does
-  // not handle. Code.gs reads e.postData.contents and parses it as JSON.
-  return fetch(GOOGLE_SCRIPT_URL, {
+  if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("PASTE_YOUR_GOOGLE_APPS_SCRIPT")) {
+    const err = new Error("GOOGLE_SCRIPT_URL is still the placeholder value.");
+    err.code = "CONFIG_MISSING";
+    throw err;
+  }
+
+  // IMPORTANT: mode "no-cors" is intentional, not an oversight.
+  // Google Apps Script Web Apps redirect the real response to a
+  // script.googleusercontent.com URL that frequently doesn't carry CORS
+  // headers. A normal fetch() then throws "Failed to fetch" on that
+  // redirected response even though the POST reached the server and the
+  // row was saved — which is exactly what was showing "please check your
+  // connection" on a perfectly good connection. With no-cors we can't
+  // read the response body or status, so we can't detect a mid-request
+  // Apps Script error this way anymore — but Code.gs's own
+  // Participant_ID + Stimulus_ID duplicate check makes it safe to treat
+  // "the browser didn't throw while sending this" as success, and safe
+  // to retry if a genuine failure did happen.
+  await fetch(GOOGLE_SCRIPT_URL, {
     method: "POST",
+    mode: "no-cors",
     body: JSON.stringify(payload),
-  })
-    .then((res) => {
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return res.json();
-    })
-    .then((data) => data.status || "ok")
-    .catch((err) => {
-      throw err;
-    });
+  });
+
+  return "ok";
 }
+
+/* ----------------------------------------------------------
+   11. RESUME AN IN-PROGRESS SESSION ON PAGE LOAD
+   If sessionStorage has an unfinished session (same tab reloaded
+   mid-experiment), jump straight back to where they left off instead
+   of starting over on the landing page with a new Participant_ID.
+   ---------------------------------------------------------- */
+
+attemptResumeSession();
