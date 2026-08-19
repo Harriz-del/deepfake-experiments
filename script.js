@@ -7,7 +7,7 @@
    ---------------------------------------------------------- */
 
 // Paste the Web App URL you get after deploying Code.gs (see README).
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvJPlCX1m1uhimwU7lf__jXbH__QLIwaUq3zbm_A5MLVt5o6qat04CyjYlx1qgBWfDSg/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPaj8WurTyppKAlcJvoqGEWW57V7PxSQdifvxV_rSLSog46Gtmzu74RBkrtb9IslewhQ/exec";
 
 // Set to true only while testing without a working Apps Script URL.
 // When true, responses are logged to the console instead of sent to Sheets.
